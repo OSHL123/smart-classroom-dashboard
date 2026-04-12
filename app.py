@@ -1,32 +1,36 @@
 import streamlit as st
 import pandas as pd
+import json
 import altair as alt
 from datetime import datetime
-import uuid
 import streamlit.components.v1 as components
 from supabase import create_client, Client
 
 # ==========================================
-# 1. CONFIGURATION & SETUP
+# 1. CONFIGURATION & CLOUD SETUP
 # ==========================================
 st.set_page_config(page_title="Smart Classroom LMS", page_icon="🎓", layout="wide")
+
+METADATA_JSON = "student_metadata.json" 
 VIDEO_URL = "http://172.20.10.5:8000/stream.mjpg"
 
 @st.cache_resource
 def init_connection():
-    return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+    return create_client(url, key)
 
 supabase = init_connection()
 
 # ==========================================
-# 2. SECURITY (LOGIN)
+# 1.5 SECURITY (MULTI-USER LOGIN GATE)
 # ==========================================
-VALID_USERS = {"admin": "admin123", "adrian": "1234"}
+VALID_USERS = {"admin": "admin123", "adrian": "1234", "ecyal5": "1234"}
 
 def check_password():
-    if st.session_state.get("password_correct", False):
-        return True
-    st.title("🔒 Lecturer Access")
+    if st.session_state.get("password_correct", False): return True
+    st.title("🔒 Smart Classroom - Lecturer Access")
+    st.caption("Please enter your credentials to access the command center.")
     with st.form("login_form"):
         username = st.text_input("Username").strip().lower()
         password = st.text_input("Password", type="password")
@@ -36,13 +40,13 @@ def check_password():
                 st.session_state["current_user"] = username
                 st.rerun() 
             else:
-                st.error("❌ Access denied.")
+                st.error("❌ Incorrect username or password. Access denied.")
     return False
 
 if not check_password(): st.stop()
 
 # ==========================================
-# 3. DATABASE HELPER FUNCTIONS
+# 2. SYSTEM COMMAND LOGIC (NEW)
 # ==========================================
 def get_system_status():
     res = supabase.table("system_command").select("*").eq("id", 1).execute()
@@ -50,107 +54,162 @@ def get_system_status():
     return {"status": "OFF", "current_session_id": "NONE"}
 
 def start_class(course_name):
-    # 1. Generate a unique ID for this specific class
     session_id = f"SES_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    
-    # 2. Create the session in the logbook
-    supabase.table("class_sessions").insert({
-        "session_id": session_id,
-        "course_name": course_name,
-        "status": "ACTIVE"
-    }).execute()
-    
-    # 3. Turn the hardware ON
-    supabase.table("system_command").update({
-        "status": "ON", 
-        "current_session_id": session_id
-    }).eq("id", 1).execute()
+    supabase.table("class_sessions").insert({"session_id": session_id, "course_name": course_name, "status": "ACTIVE"}).execute()
+    supabase.table("system_command").update({"status": "ON", "current_session_id": session_id}).eq("id", 1).execute()
+    st.session_state["active_course"] = course_name # Save course for filtering
     st.rerun()
 
 def end_class(session_id):
-    # 1. Mark session as complete
-    supabase.table("class_sessions").update({
-        "end_time": datetime.now().isoformat(),
-        "status": "COMPLETED"
-    }).eq("session_id", session_id).execute()
-    
-    # 2. Turn hardware OFF
-    supabase.table("system_command").update({
-        "status": "OFF", 
-        "current_session_id": "NONE"
-    }).eq("id", 1).execute()
+    supabase.table("class_sessions").update({"end_time": datetime.now().isoformat(), "status": "COMPLETED"}).eq("session_id", session_id).execute()
+    supabase.table("system_command").update({"status": "OFF", "current_session_id": "NONE"}).eq("id", 1).execute()
+    st.session_state["active_course"] = None
     st.rerun()
 
 # ==========================================
-# 4. MAIN DASHBOARD ROUTING
+# 3. DATA LOADING
 # ==========================================
 sys_status = get_system_status()
 current_state = sys_status["status"]
 active_session = sys_status["current_session_id"]
 
-# --- STATE: CLASS IS OFF (PRE-CLASS SETUP) ---
+@st.cache_data(ttl=3)
+def load_data(session_id):
+    # Only load hand raises for THIS specific class session
+    response = supabase.table("hand_raises").select("*").eq("session_id", session_id).order("created_at", desc=True).execute()
+    if response.data:
+        df_part = pd.DataFrame(response.data)
+        df_part = df_part.rename(columns={"student_name": "Name", "event_type": "Event", "created_at": "Time"})
+        df_part['Time'] = pd.to_datetime(df_part['Time']).dt.tz_convert('Asia/Kuala_Lumpur').dt.strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        df_part = pd.DataFrame(columns=["Name", "Time", "Event"])
+
+    metadata = {}
+    try:
+        with open(METADATA_JSON, "r") as f:
+            metadata = json.load(f)
+    except Exception: pass
+            
+    df_att = pd.DataFrame(columns=["Name", "Time"]) 
+    return df_att, df_part, metadata
+
+# ==========================================
+# 4. ROUTING: PRE-CLASS SETUP (OFF STATE)
+# ==========================================
 if current_state == "OFF":
     st.title("🏫 Pre-Class Setup")
-    st.info("The IoT Camera Hardware is currently sleeping. Select a course to wake the system and begin logging.")
+    st.info("The Classroom IoT System is currently sleeping. Select a class to begin.")
     
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 1])
     with col1:
-        st.subheader("Start a New Session")
-        course_selection = st.selectbox("Select Course", [
+        st.subheader("Start New Class")
+        course_selection = st.selectbox("Select Course Routine", [
             "Year 1 EEE - Engineering Mathematics", 
             "Year 2 EEE - Digital Electronics",
-            "Year 3 EEE - Power Systems",
-            "Final Year - Thesis Seminar"
+            "Final Year EEE - Thesis Seminar"
         ])
-        if st.button("🟢 START CLASS & WAKE HARDWARE", use_container_width=True, type="primary"):
+        if st.button("🟢 START CLASS", use_container_width=True, type="primary"):
             start_class(course_selection)
             
     with col2:
-        st.subheader("Past Sessions History")
-        past_sessions = supabase.table("class_sessions").select("*").eq("status", "COMPLETED").order("start_time", desc=True).limit(5).execute()
-        if past_sessions.data:
-            st.dataframe(pd.DataFrame(past_sessions.data)[['course_name', 'start_time', 'end_time']], use_container_width=True)
-        else:
-            st.caption("No past sessions found.")
+        st.subheader("Lecturer Info")
+        st.write(f"**Logged in as:** {st.session_state.get('current_user', 'Admin').title()}")
+        st.write("**Database:** Connected ☁️")
+        if st.button("🚪 Log Out"):
+            st.session_state["password_correct"] = False
+            st.rerun()
 
-# --- STATE: CLASS IS ON (LIVE COMMAND CENTER) ---
+# ==========================================
+# 5. ROUTING: LIVE COMMAND CENTER (ON STATE)
+# ==========================================
 elif current_state == "ON":
-    # Sidebar Controls
+    df_att, df_part, metadata = load_data(active_session)
+    active_course = st.session_state.get("active_course", "Unknown Course")
+
+    # --- EXACT ORIGINAL SIDEBAR ---
     with st.sidebar:
-        st.success("🟢 HARDWARE ACTIVE")
-        st.markdown(f"**Session:** `{active_session}`")
-        if st.button("🔴 END CLASS & SLEEP HARDWARE", use_container_width=True, type="primary"):
+        st.title("🏫 Class Monitor")
+        current_user = st.session_state.get("current_user", "Admin").title()
+        st.markdown(f"**Logged in as:** 👤 {current_user}")
+        st.caption(f"Course: {active_course}")
+        
+        # NEW END CLASS BUTTON
+        if st.button("🔴 END CLASS", use_container_width=True, type="primary"):
             end_class(active_session)
         st.divider()
-        st.subheader("📷 Live Camera")
-        components.html(f'<img src="{VIDEO_URL}" style="width:100%; border-radius:10px;">', height=250)
-
-    # Main Live Dashboard
-    st.title("🔴 LIVE: Classroom Command Center")
-    
-    # Fetch ONLY data for the current active session
-    data_res = supabase.table("hand_raises").select("*").eq("session_id", active_session).order("created_at", desc=True).execute()
-    df_part = pd.DataFrame(data_res.data) if data_res.data else pd.DataFrame(columns=["student_name", "created_at", "event_type"])
-    
-    # Fetch registered students
-    student_res = supabase.table("students").select("*").execute()
-    student_dict = {s['student_id']: s['name'] for s in student_res.data} if student_res.data else {}
-
-    col_main, col_chart = st.columns([2, 1])
-    
-    with col_main:
-        st.subheader("Live Engagement Feed")
-        if not df_part.empty:
-            display_df = df_part.copy()
-            display_df['Time'] = pd.to_datetime(display_df['created_at']).dt.tz_convert('Asia/Kuala_Lumpur').dt.strftime('%H:%M:%S')
-            st.dataframe(display_df[['Time', 'student_name', 'event_type']], use_container_width=True)
-        else:
-            st.info("Waiting for students to interact...")
             
-    with col_chart:
-        st.subheader("Top Participants")
+        if st.button("🔄 Refresh Data", use_container_width=True):
+            st.rerun()
+
+        st.subheader("📷 Front Camera Feed")
+        st.caption("Requires local network or Edge Tunnel")
+        components.html(
+            f'<img src="{VIDEO_URL}" style="width:100%; border-radius:10px;" alt="Camera Offline/Not on Local Network">',
+            height=300
+        )
+        st.divider()
+        col1, col2 = st.columns(2)
+        col1.metric("Present", len(df_att))
+        col2.metric("Hand Raises", len(df_part))
+        st.divider()
+        
+        st.subheader("🔴 Live Event Log")
         if not df_part.empty:
-            counts = df_part["student_name"].value_counts().reset_index()
-            counts.columns = ["Name", "Count"]
-            chart = alt.Chart(counts).mark_bar().encode(x='Count', y=alt.Y('Name', sort='-x'), color='Name').interactive()
-            st.altair_chart(chart, use_container_width=True)
+            recent_events = df_part.head(10)
+            for index, row in recent_events.iterrows():
+                time_text = str(row['Time'])
+                display_time = time_text.split(' ')[1] if " " in time_text else time_text
+                st.text(f"🙋 {row['Name']} ({display_time})")
+        else:
+            st.caption("Waiting for activity...")
+
+    # --- EXACT ORIGINAL MAIN DASHBOARD ---
+    st.title("🎓 Classroom Command Center")
+
+    tab1, tab2 = st.tabs(["📊 Live Monitor", "👤 Student Profiles"])
+
+    with tab1:
+        col_main, col_chart = st.columns([2, 1])
+        with col_main:
+            st.subheader("📋 Attendance Sheet")
+            st.info("Cloud Attendance feature pending Door Node database integration.")
+            st.dataframe(df_att, use_container_width=True, hide_index=True)
+            
+        with col_chart:
+            st.subheader("🏆 Top Participants")
+            if not df_part.empty:
+                counts = df_part["Name"].value_counts().reset_index()
+                counts.columns = ["Name", "Count"]
+                chart = alt.Chart(counts).mark_bar().encode(x='Count', y=alt.Y('Name', sort='-x'), color='Name', tooltip=['Name', 'Count']).interactive()
+                st.altair_chart(chart, use_container_width=True)
+            else:
+                st.info("No participation yet.")
+
+    with tab2:
+        st.subheader(f"Student Detail View ({active_course})")
+        
+        # NEW FILTERING LOGIC: Only show students who are registered for this course
+        student_list = []
+        for name, info in metadata.items():
+            # If the student's registered courses include this active course, add them to the dropdown
+            if active_course in info.get("courses", []):
+                student_list.append(name)
+        
+        if not student_list:
+            st.warning(f"No students registered for {active_course}. Please update 'student_metadata.json' on GitHub.")
+        else:
+            selected_student = st.selectbox("Select a Student:", sorted(student_list))
+            
+            if selected_student:
+                default_info = {"student_id": "N/A", "major": "Unknown"}
+                info = metadata.get(selected_student, default_info)
+                student_raises = len(df_part[df_part["Name"] == selected_student])
+                
+                c1, c2 = st.columns([1, 3])
+                with c1:
+                    st.image("https://via.placeholder.com/150", caption=selected_student)
+                    st.metric("Engagement Score", f"{student_raises} pts")
+                with c2:
+                    st.markdown(f"### {selected_student}")
+                    st.markdown(f"**Student ID:** {info.get('student_id', 'N/A')}")
+                    st.markdown(f"**Major:** {info.get('major', 'N/A')}")
