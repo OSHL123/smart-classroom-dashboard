@@ -11,7 +11,7 @@ from supabase import create_client, Client
 # ==========================================
 st.set_page_config(page_title="Smart Classroom LMS", page_icon="🎓", layout="wide")
 
-METADATA_JSON = "student_metadata.json" 
+METADATA_JSON = "student_metabase.json" 
 VIDEO_URL = "http://172.20.10.5:8000/stream.mjpg"
 
 @st.cache_resource
