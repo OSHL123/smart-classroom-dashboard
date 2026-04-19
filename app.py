@@ -74,6 +74,7 @@ current_state = sys_status["status"]
 active_session = sys_status["current_session_id"]
 
 @st.cache_data(ttl=3)
+'''
 def load_data(session_id):
     # Only load hand raises for THIS specific class session
     response = supabase.table("hand_raises").select("*").eq("session_id", session_id).order("created_at", desc=True).execute()
@@ -92,7 +93,31 @@ def load_data(session_id):
             
     df_att = pd.DataFrame(columns=["Name", "Time"]) 
     return df_att, df_part, metadata
+'''
 
+def load_data(session_id):
+    # Only load data for THIS specific class session
+    response = supabase.table("hand_raises").select("*").eq("session_id", session_id).order("created_at", desc=True).execute()
+    
+    if response.data:
+        df = pd.DataFrame(response.data)
+        df = df.rename(columns={"student_name": "Name", "event_type": "Event", "created_at": "Time"})
+        df['Time'] = pd.to_datetime(df['Time']).dt.tz_convert('Asia/Kuala_Lumpur').dt.strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Split the data based on the Event type
+        df_att = df[df['Event'] == 'Door Scan'][['Name', 'Time']].drop_duplicates(subset=['Name'], keep='first')
+        df_part = df[df['Event'] == 'Hand Raise']
+    else:
+        df_att = pd.DataFrame(columns=["Name", "Time"])
+        df_part = pd.DataFrame(columns=["Name", "Time", "Event"])
+
+    metadata = {}
+    try:
+        with open(METADATA_JSON, "r") as f:
+            metadata = json.load(f)
+    except Exception: pass
+            
+    return df_att, df_part, metadata
 # ==========================================
 # 4. ROUTING: PRE-CLASS SETUP (OFF STATE)
 # ==========================================
@@ -172,7 +197,7 @@ elif current_state == "ON":
         col_main, col_chart = st.columns([2, 1])
         with col_main:
             st.subheader("📋 Attendance Sheet")
-            st.info("Cloud Attendance feature pending Door Node database integration.")
+          #  st.info("Cloud Attendance feature pending Door Node database integration.")
             st.dataframe(df_att, use_container_width=True, hide_index=True)
             
         with col_chart:
