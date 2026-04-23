@@ -2,51 +2,126 @@
   "Adrian": {
     "student_id": "UNM1001", 
     "major": "Electrical & Electronic Engineering",
-    "courses": ["Year 1 EEE - Engineering Mathematics", "Final Year EEE - Thesis Seminar"]
+    "courses": ["Year 1 EEE - Engineering Mathematics", "Final Year EEE - Thesis Seminar"],
+    "attendance_rate": "86.6%",
+    "current_grade": "A- (78%)",
+    "attendance_history": [
+      {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
+      {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Absent"},
+      {"Date": "2026-04-18", "Topic": "Lecture 3: Advanced Theory", "Status": "Present"},
+      {"Date": "2026-04-22", "Topic": "Lecture 4: Practical Application", "Status": "Present"}
+    ]
   },
   "John Doe": {
     "student_id": "UNM1002", 
     "major": "Mechanical Engineering",
-    "courses": ["Year 2 EEE - Digital Electronics"]
+    "courses": ["Year 2 EEE - Digital Electronics"],
+    "attendance_rate": "100%",
+    "current_grade": "B+ (74%)",
+    "attendance_history": [
+      {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
+      {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
+      {"Date": "2026-04-18", "Topic": "Lecture 3: Advanced Theory", "Status": "Present"},
+      {"Date": "2026-04-22", "Topic": "Lecture 4: Practical Application", "Status": "Present"}
+    ]
   },
   "Sarah Lee": {
     "student_id": "UNM1003", 
     "major": "Electrical & Electronic Engineering",
-    "courses": ["Year 1 EEE - Engineering Mathematics", "Year 2 EEE - Digital Electronics"]
+    "courses": ["Year 1 EEE - Engineering Mathematics", "Year 2 EEE - Digital Electronics"],
+    "attendance_rate": "75.0%",
+    "current_grade": "A (82%)",
+    "attendance_history": [
+      {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
+      {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
+      {"Date": "2026-04-18", "Topic": "Lecture 3: Advanced Theory", "Status": "Absent"},
+      {"Date": "2026-04-22", "Topic": "Lecture 4: Practical Application", "Status": "Present"}
+    ]
   },
   "Michael Chen": {
     "student_id": "UNM1004", 
     "major": "Mechatronics Engineering",
-    "courses": ["Final Year EEE - Thesis Seminar"]
+    "courses": ["Final Year EEE - Thesis Seminar"],
+    "attendance_rate": "50.0%",
+    "current_grade": "C+ (62%)",
+    "attendance_history": [
+      {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Absent"},
+      {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
+      {"Date": "2026-04-18", "Topic": "Lecture 3: Advanced Theory", "Status": "Absent"},
+      {"Date": "2026-04-22", "Topic": "Lecture 4: Practical Application", "Status": "Present"}
+    ]
   },
   "Aisha Rahman": {
     "student_id": "UNM1005", 
     "major": "Electrical & Electronic Engineering",
-    "courses": ["Year 2 EEE - Digital Electronics", "Final Year EEE - Thesis Seminar"]
+    "courses": ["Year 2 EEE - Digital Electronics", "Final Year EEE - Thesis Seminar"],
+    "attendance_rate": "100%",
+    "current_grade": "A+ (91%)",
+    "attendance_history": [
+      {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
+      {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
+      {"Date": "2026-04-18", "Topic": "Lecture 3: Advanced Theory", "Status": "Present"},
+      {"Date": "2026-04-22", "Topic": "Lecture 4: Practical Application", "Status": "Present"}
+    ]
   },
   "David Kim": {
     "student_id": "UNM1006", 
     "major": "Computer Science",
-    "courses": ["Year 1 EEE - Engineering Mathematics"]
+    "courses": ["Year 1 EEE - Engineering Mathematics"],
+    "attendance_rate": "80.0%",
+    "current_grade": "B (68%)",
+    "attendance_history": [
+      {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
+      {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
+      {"Date": "2026-04-18", "Topic": "Lecture 3: Advanced Theory", "Status": "Present"},
+      {"Date": "2026-04-22", "Topic": "Lecture 4: Practical Application", "Status": "Absent"}
+    ]
   },
   "Emily Wong": {
     "student_id": "UNM1007", 
     "major": "Electrical & Electronic Engineering",
-    "courses": ["Year 1 EEE - Engineering Mathematics", "Final Year EEE - Thesis Seminar"]
+    "courses": ["Year 1 EEE - Engineering Mathematics", "Final Year EEE - Thesis Seminar"],
+    "attendance_rate": "100%",
+    "current_grade": "A- (76%)",
+    "attendance_history": [
+      {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
+      {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
+      {"Date": "2026-04-18", "Topic": "Lecture 3: Advanced Theory", "Status": "Present"},
+      {"Date": "2026-04-22", "Topic": "Lecture 4: Practical Application", "Status": "Present"}
+    ]
   },
   "Kevin Raj": {
     "student_id": "UNM1008", 
     "major": "Electrical & Electronic Engineering",
-    "courses": ["Year 2 EEE - Digital Electronics"]
+    "courses": ["Year 2 EEE - Digital Electronics"],
+    "attendance_rate": "25.0%",
+    "current_grade": "D (45%)",
+    "attendance_history": [
+      {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
+      {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Absent"},
+      {"Date": "2026-04-18", "Topic": "Lecture 3: Advanced Theory", "Status": "Absent"},
+      {"Date": "2026-04-22", "Topic": "Lecture 4: Practical Application", "Status": "Absent"}
+    ]
   },
   "Priya Patel": {
     "student_id": "UNM1009", 
     "major": "Software Engineering",
-    "courses": ["Year 1 EEE - Engineering Mathematics"]
+    "courses": ["Year 1 EEE - Engineering Mathematics"],
+    "attendance_rate": "95.0%",
+    "current_grade": "A+ (96%)",
+    "attendance_history": [
+      {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
+      {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
+      {"Date": "2026-04-18", "Topic": "Lecture 3: Advanced Theory", "Status": "Present"},
+      {"Date": "2026-04-22", "Topic": "Lecture 4: Practical Application", "Status": "Present"}
+    ]
   },
   "Unknown": {
     "student_id": "GUEST00", 
     "major": "Unregistered Guest",
-    "courses": ["Year 1 EEE - Engineering Mathematics", "Year 2 EEE - Digital Electronics", "Final Year EEE - Thesis Seminar"]
+    "courses": ["Year 1 EEE - Engineering Mathematics", "Year 2 EEE - Digital Electronics", "Final Year EEE - Thesis Seminar"],
+    "attendance_rate": "N/A",
+    "current_grade": "N/A",
+    "attendance_history": []
   }
 }
