@@ -143,7 +143,7 @@ if current_state == "OFF":
 # ==========================================
 
 elif current_state == "ON":
-    play_alert_sound()
+  #  play_alert_sound()
     df_att, df_part, metadata = load_data(active_session)
     active_course = st.session_state.get("active_course", "Unknown Course")
     
