@@ -25,21 +25,15 @@ supabase = init_connection()
 # ==========================================
 # 1. Sounnd Alert 
 # ==========================================
+# ==========================================
+# 1. Sound Alert 
+# ==========================================
 def play_alert_sound():
     try:
-        # Change 'beep.mp3' if your audio file has a different name
-        with open("Beep - Sound Effect.mp3", "rb") as f:
-            data = f.read()
-            b64 = base64.b64encode(data).decode()
-            # Inject invisible autoplaying audio
-            md = f"""
-                <audio autoplay="true" style="display:none;">
-                <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-                </audio>
-                """
-            st.markdown(md, unsafe_allow_html=True)
+        # Using Streamlit's native audio engine with autoplay forced ON
+        st.audio("Beep - Sound Effect.mp3", format="audio/mp3", autoplay=True)
     except Exception as e:
-        pass # If the sound file is missing, just ignore it and don't crash
+        st.error(f"⚠️ Audio system failed: {e}")
 # ==========================================
 # 1.5 SECURITY (MULTI-USER LOGIN GATE)
 # ==========================================
