@@ -58,6 +58,7 @@ def start_class(course_name):
     supabase.table("class_sessions").insert({"session_id": session_id, "course_name": course_name, "status": "ACTIVE"}).execute()
     supabase.table("system_command").update({"status": "ON", "current_session_id": session_id}).eq("id", 1).execute()
     st.session_state["active_course"] = course_name # Save course for filtering
+    st.session_state["last_raise_count"] = 0
     st.rerun()
 
 def end_class(session_id):
@@ -131,7 +132,31 @@ if current_state == "OFF":
 elif current_state == "ON":
     df_att, df_part, metadata = load_data(active_session)
     active_course = st.session_state.get("active_course", "Unknown Course")
+    
+   # ==========================================
+    # --- NEW: TOAST ALERT NOTIFICATION LOGIC ---
+    # ==========================================
+    # 1. Initialize the memory if it doesn't exist
+    if "last_raise_count" not in st.session_state:
+        st.session_state["last_raise_count"] = len(df_part)
 
+    # 2. Check if the database has MORE hand raises than we last remembered
+    current_raise_count = len(df_part)
+    if current_raise_count > st.session_state["last_raise_count"]:
+        
+        # 3. Calculate how many new raises happened
+        new_raises = current_raise_count - st.session_state["last_raise_count"]
+        
+        # 4. Trigger a pop-up for each new raise
+        for i in range(new_raises):
+            # Because your SQL query orders by desc=True, the newest ones are at the top (index 0)
+            new_student = df_part.iloc[i]['Name']
+            st.toast(f"Teacher Alert: {new_student} just raised their hand!", icon="🔔")
+            
+        # 5. Update our memory so it doesn't pop up again next refresh
+        st.session_state["last_raise_count"] = current_raise_count
+    # ==========================================
+    
     # --- EXACT ORIGINAL SIDEBAR ---
     with st.sidebar:
         st.title("🏫 Class Monitor")
