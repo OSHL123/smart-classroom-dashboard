@@ -5,6 +5,7 @@ import altair as alt
 from datetime import datetime
 import streamlit.components.v1 as components
 from supabase import create_client, Client
+import base64
 
 # ==========================================
 # 1. CONFIGURATION & CLOUD SETUP
@@ -21,7 +22,24 @@ def init_connection():
     return create_client(url, key)
 
 supabase = init_connection()
-
+# ==========================================
+# 1. Sounnd Alert 
+# ==========================================
+def play_alert_sound():
+    try:
+        # Change 'beep.mp3' if your audio file has a different name
+        with open("beep.mp3", "rb") as f:
+            data = f.read()
+            b64 = base64.b64encode(data).decode()
+            # Inject invisible autoplaying audio
+            md = f"""
+                <audio autoplay="true" style="display:none;">
+                <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+                </audio>
+                """
+            st.markdown(md, unsafe_allow_html=True)
+    except Exception as e:
+        pass # If the sound file is missing, just ignore it and don't crash
 # ==========================================
 # 1.5 SECURITY (MULTI-USER LOGIN GATE)
 # ==========================================
@@ -143,6 +161,8 @@ elif current_state == "ON":
     # 2. Check if the database has MORE hand raises than we last remembered
     current_raise_count = len(df_part)
     if current_raise_count > st.session_state["last_raise_count"]:
+        # --- NEW: Play the audio alert once ---
+        play_alert_sound()
         
         # 3. Calculate how many new raises happened
         new_raises = current_raise_count - st.session_state["last_raise_count"]
