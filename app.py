@@ -28,7 +28,7 @@ supabase = init_connection()
 def play_alert_sound():
     try:
         # Change 'beep.mp3' if your audio file has a different name
-        with open("beep.mp3", "rb") as f:
+        with open("Beep - Sound Effect.mp3", "rb") as f:
             data = f.read()
             b64 = base64.b64encode(data).decode()
             # Inject invisible autoplaying audio
