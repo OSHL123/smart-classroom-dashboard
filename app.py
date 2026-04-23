@@ -141,7 +141,9 @@ if current_state == "OFF":
 # ==========================================
 # 5. ROUTING: LIVE COMMAND CENTER (ON STATE)
 # ==========================================
+
 elif current_state == "ON":
+    play_alert_sound()
     df_att, df_part, metadata = load_data(active_session)
     active_course = st.session_state.get("active_course", "Unknown Course")
     
