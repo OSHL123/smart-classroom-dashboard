@@ -4,7 +4,6 @@
     "major": "Electrical & Electronic Engineering",
     "courses": ["Year 1 EEE - Engineering Mathematics", "Final Year EEE - Thesis Seminar"],
     "attendance_rate": "86.6%",
-    "current_grade": "A- (78%)",
     "attendance_history": [
       {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
       {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Absent"},
@@ -17,7 +16,6 @@
     "major": "Mechanical Engineering",
     "courses": ["Year 2 EEE - Digital Electronics"],
     "attendance_rate": "100%",
-    "current_grade": "B+ (74%)",
     "attendance_history": [
       {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
       {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
@@ -30,7 +28,6 @@
     "major": "Electrical & Electronic Engineering",
     "courses": ["Year 1 EEE - Engineering Mathematics", "Year 2 EEE - Digital Electronics"],
     "attendance_rate": "75.0%",
-    "current_grade": "A (82%)",
     "attendance_history": [
       {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
       {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
@@ -43,7 +40,6 @@
     "major": "Mechatronics Engineering",
     "courses": ["Final Year EEE - Thesis Seminar"],
     "attendance_rate": "50.0%",
-    "current_grade": "C+ (62%)",
     "attendance_history": [
       {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Absent"},
       {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
@@ -56,7 +52,6 @@
     "major": "Electrical & Electronic Engineering",
     "courses": ["Year 2 EEE - Digital Electronics", "Final Year EEE - Thesis Seminar"],
     "attendance_rate": "100%",
-    "current_grade": "A+ (91%)",
     "attendance_history": [
       {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
       {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
@@ -69,7 +64,6 @@
     "major": "Computer Science",
     "courses": ["Year 1 EEE - Engineering Mathematics"],
     "attendance_rate": "80.0%",
-    "current_grade": "B (68%)",
     "attendance_history": [
       {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
       {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
@@ -82,7 +76,6 @@
     "major": "Electrical & Electronic Engineering",
     "courses": ["Year 1 EEE - Engineering Mathematics", "Final Year EEE - Thesis Seminar"],
     "attendance_rate": "100%",
-    "current_grade": "A- (76%)",
     "attendance_history": [
       {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
       {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
@@ -95,7 +88,6 @@
     "major": "Electrical & Electronic Engineering",
     "courses": ["Year 2 EEE - Digital Electronics"],
     "attendance_rate": "25.0%",
-    "current_grade": "D (45%)",
     "attendance_history": [
       {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
       {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Absent"},
@@ -108,7 +100,6 @@
     "major": "Software Engineering",
     "courses": ["Year 1 EEE - Engineering Mathematics"],
     "attendance_rate": "95.0%",
-    "current_grade": "A+ (96%)",
     "attendance_history": [
       {"Date": "2026-04-10", "Topic": "Lecture 1: Introduction", "Status": "Present"},
       {"Date": "2026-04-15", "Topic": "Lecture 2: Core Concepts", "Status": "Present"},
