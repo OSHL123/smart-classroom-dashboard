@@ -248,15 +248,32 @@ elif current_state == "ON":
             selected_student = st.selectbox("Select a Student:", sorted(student_list))
             
             if selected_student:
-                default_info = {"student_id": "N/A", "major": "Unknown"}
+                default_info = {
+                    "student_id": "N/A", 
+                    "major": "Unknown",
+                    "attendance_rate": "N/A",
+                    "current_grade": "N/A",
+                    "attendance_history": []
+                }
                 info = metadata.get(selected_student, default_info)
                 student_raises = len(df_part[df_part["Name"] == selected_student])
                 
                 c1, c2 = st.columns([1, 3])
                 with c1:
                     st.image("https://via.placeholder.com/150", caption=selected_student)
-                    st.metric("Engagement Score", f"{student_raises} pts")
+                    st.metric("Engagement Count", f"{student_raises} Events")
+                    st.metric("Attendance Rate", info.get("attendance_rate", "N/A"))
+                    st.metric("Academic Standing", info.get("current_grade", "N/A"))
                 with c2:
                     st.markdown(f"### {selected_student}")
                     st.markdown(f"**Student ID:** {info.get('student_id', 'N/A')}")
                     st.markdown(f"**Major:** {info.get('major', 'N/A')}")
+                    st.markdown("---")
+                    st.markdown("**📅 Historical Attendance Record**")
+                    
+                    history_data = info.get("attendance_history", [])
+                    if history_data:
+                        history_df = pd.DataFrame(history_data)
+                        st.dataframe(history_df, use_container_width=True, hide_index=True)
+                    else:
+                        st.info("No historical attendance records found for this student.")
