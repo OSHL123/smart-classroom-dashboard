@@ -252,7 +252,6 @@ elif current_state == "ON":
                     "student_id": "N/A", 
                     "major": "Unknown",
                     "attendance_rate": "N/A",
-                    "current_grade": "N/A",
                     "attendance_history": []
                 }
                 info = metadata.get(selected_student, default_info)
@@ -263,7 +262,6 @@ elif current_state == "ON":
                     st.image("https://via.placeholder.com/150", caption=selected_student)
                     st.metric("Engagement Count", f"{student_raises} Events")
                     st.metric("Attendance Rate", info.get("attendance_rate", "N/A"))
-                    st.metric("Academic Standing", info.get("current_grade", "N/A"))
                 with c2:
                     st.markdown(f"### {selected_student}")
                     st.markdown(f"**Student ID:** {info.get('student_id', 'N/A')}")
